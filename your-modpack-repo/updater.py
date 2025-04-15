@@ -6,7 +6,7 @@ from tkinter import filedialog, messagebox, ttk
 import urllib.request
 
 CONFIG_FILE = "updater_config.json"
-MANIFEST_URL = "https://raw.githubusercontent.com/your-username/your-repo/main/manifest.json"
+MANIFEST_URL = "https://raw.githubusercontent.com/you-cant-run/minecraft-modpack-updater/main/manifest.json"
 
 def load_config():
     if os.path.exists(CONFIG_FILE):
