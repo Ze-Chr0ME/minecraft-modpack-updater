@@ -4,23 +4,43 @@ import json
 import tkinter as tk
 from tkinter import filedialog, messagebox, ttk
 import urllib.request
+import platform
 
-CONFIG_FILE = "updater_config.json"
+def get_config_dir():
+    system = platform.system()
+    if system == "Windows":
+        return os.path.join(os.environ['APPDATA'], "ModpackUpdaterConfig")
+    elif system == "Darwin":  # macOS
+        return os.path.expanduser("~/Library/Application Support/ModpackUpdaterConfig")
+    else:  # Linux and other UNIX-like systems
+        return os.path.expanduser("~/.config/ModpackUpdaterConfig")
+
+CONFIG_PATH = os.path.join(get_config_dir(), "updater_config.json")
 MANIFEST_URL = "https://raw.githubusercontent.com/you-cant-run/minecraft-modpack-updater/main/manifest.json"
 BASE_MOD_URL = "https://raw.githubusercontent.com/you-cant-run/minecraft-modpack-updater/main/"
 
 def load_config():
-    if os.path.exists(CONFIG_FILE):
+    # Create config directory if it doesn't exist
+    os.makedirs(get_config_dir(), exist_ok=True)
+    
+    if os.path.exists(CONFIG_PATH):
         try:
-            with open(CONFIG_FILE, "r") as f:
+            with open(CONFIG_PATH, "r") as f:
                 return json.load(f)
-        except:
+        except Exception as e:
+            print(f"Error loading config: {e}")
             return {}
     return {}
 
 def save_config(config):
-    with open(CONFIG_FILE, "w") as f:
-        json.dump(config, f)
+    # Ensure config directory exists before saving
+    os.makedirs(get_config_dir(), exist_ok=True)
+    
+    try:
+        with open(CONFIG_PATH, "w") as f:
+            json.dump(config, f)
+    except Exception as e:
+        print(f"Error saving config: {e}")
 
 def calculate_sha256(filepath):
     if not os.path.exists(filepath):
